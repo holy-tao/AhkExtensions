@@ -10,7 +10,7 @@
 /**
  * Provides extension methods for {@link https://www.autohotkey.com/docs/v2/lib/File.htm Files}
  * 
- * Requires some types from https://github.com/holy-tao/AhkWin32Projection
+ * Requires some types from https://github.com/holy-tao/AhkWin32Projection to be available in a library
  */
 class FileExtensions {
     static __New() {
@@ -38,6 +38,10 @@ class FileExtensions {
 
         File.Prototype.DefineProp("GetCreationTime", { Call: (self, &ms := 0) => 
             FileExtensions.GetTime(self, "Creation", &ms)})
+        File.Prototype.DefineProp("GetLastAccessTime", { Call: (self, &ms := 0) => 
+            FileExtensions.GetTime(self, "Access", &ms)})
+        File.Prototype.DefineProp("GetLastWriteTime", { Call: (self, &ms := 0) => 
+            FileExtensions.GetTime(self, "Write", &ms)})
 
         ; ====== Attributes ======
         ; Gets the raw attribute enumeration
@@ -227,7 +231,6 @@ class FileExtensions {
     static _GetInfo(forFile) {
         fileInfo := BY_HANDLE_FILE_INFORMATION()
         FileSystem.GetFileInformationByHandle(forFile.Handle, fileInfo)
-        FileAppend("BY_HANDLE_FILE_INFORMATION ptr=" fileInfo.ptr "`n" fileInfo.HexDump(), "*")
         return fileInfo
     }
 }
