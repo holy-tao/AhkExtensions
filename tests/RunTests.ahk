@@ -6,10 +6,12 @@
 
 #Include FileExtensions.Test.ahk
 #Include ArrayExtensions.Test.ahk
+#include MapExtensions.Test.ahk
 
 YUnit.Use(YunitResultCounter, YUnitJUnit, YUnitStdOut).Test(
     FileExtensionTests,
-    ArrayExtensionTests
+    ArrayExtensionTests,
+    MapExtensions
 )
 
 Exit(-YunitResultCounter.failures)
