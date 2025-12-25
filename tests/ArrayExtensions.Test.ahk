@@ -176,6 +176,237 @@ class ArrayExtensionTests {
         arr := [1, 2, 3, 4, 5]
         Assert.Throws((*) => arr.SingleOrDefault(el => el > 5), UnsetError)
     }
+
+    Single_WithSingleMatchingElement_ReturnsIt() {
+        arr := [1, 2, 3, 4, 5]
+        result := arr.Single(el => el > 4)
+        Assert.Equals(result, 5)
+    }
+
+    Single_WithMultipleMatchingElements_ThrowsTargetError() {
+        arr := [1, 2, 3, 4, 5]
+        Assert.Throws((*) => arr.Single(el => el > 3), TargetError)
+    }
+
+    Single_WithEmptyArray_ThrowsTargetError() {
+        arr := []
+        Assert.Throws((*) => arr.Single(el => el > 3), TargetError)
+    }
+
+    Map_MapsItems() {
+        arr := [1, 2, 3, 4, 5]
+        mapped := arr.Map(i => i * 2)
+
+        Assert.ArraysEqual(mapped, [2, 4, 6, 8, 10])
+        Assert.ArraysEqual(arr, [1, 2, 3, 4, 5])
+    }
+
+    Filter_FiltersItems() {
+        arr := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        filtered := arr.Filter(v => v <= 5)
+
+        Assert.ArraysEqual(filtered, [1, 2, 3, 4, 5])
+        Assert.ArraysEqual(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    }
+
+    Slice_WithTwoPositiveIndices_ReturnsSliceFromStart() {
+        arr := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        slice := arr.Slice(2, 4)
+
+        Assert.ArraysEqual(slice, [2, 3, 4])
+    }
+
+    Slice_WithTwoNegativeIndices_ReturnsSliceFromEnd() {
+        arr := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        slice := arr.Slice(-4, -2)
+
+        Assert.ArraysEqual(slice, [7, 8, 9])
+    }
+
+    Slice_WithSinglePositiveIndex_ReturnsItemsToEnd() {
+        arr := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        slice := arr.Slice(5)
+
+        Assert.ArraysEqual(slice, [5, 6, 7, 8, 9, 10])
+    }
+
+    Slice_WithSingleNegativeIndex_ReturnsItemsToEnd() {
+        arr := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        slice := arr.Slice(-4)
+
+        Assert.ArraysEqual(slice, [7, 8, 9, 10])
+    }
+
+    Slice_WithInvalidIndices_ThrowsValueError() {
+        arr := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+        Assert.Throws((*) => arr.Slice(5, 1), ValueError)
+        Assert.Throws((*) => arr.Slice(-1, -5), ValueError)
+    }
+
+    All_WhereConditionIsMet_ReturnsTrue() {
+        arr := [1, 2, 3]
+        Assert.Equals(arr.All(el => el > 0), true)
+    }
+
+    All_WhereConditionIsUnmet_ReturnsFalse() {
+        arr := [-1, 2, 3]
+        Assert.Equals(arr.All(el => el > 0), false)
+    }
+
+    Any_WhereConditionIsMet_ReturnsTrue() {
+        arr := [1, -2, -3]
+        Assert.Equals(arr.Any(el => el > 0), true)
+    }
+
+    Any_WhereConditionIsNotMet_ReturnsFalse() {
+        arr := [1, 2, 3]
+        Assert.Equals(arr.All(el => el <= 0), false)
+    }
+
+    Any_WithEmptyCallbackAndNonEmptyArray_ReturnsTrue() {
+        Assert.Equals([1].Any(), true)
+    }
+
+    Any_WithEmptyCallbackAndEmptyArray_ReturnsFalse(){
+        Assert.Equals([].Any(), false)
+    }
+
+    ToString_WithPrimitives_ReturnsStringArray() {
+        arr := [1, 2, 3, 4, 5]
+        Assert.Equals(String(arr), "[1, 2, 3, 4, 5]")
+    }
+
+    Reduce_With2ParamCallback_ReducesArray() {
+        arr := [1, 1, 1, 1, 1]
+        val := arr.Reduce((a, b) => a + b)
+
+        Assert.Equals(val, 5)
+    }
+
+    Reduce_WithCallableObject_ReducesArray() {
+        obj := { Call: (a, b) => a + b }
+        arr := [1, 1, 1, 1, 1]
+        val := arr.Reduce(obj)
+
+        Assert.Equals(val, 5)
+    }
+
+    Reduce_WithInitialValue_UsesIt() {
+        arr := [1, 1, 1, 1, 1]
+        val := arr.Reduce((a, b) => a + b, 5)
+
+        Assert.Equals(val, 10)
+    }
+
+    Reduce_With3ParamCallback_ReducesArray() {
+        arr := [1, 2, 3, 4, 5]
+        out := []
+
+        arr.Reduce((a, b, i) => out.Push(b + i), 1)
+        Assert.ArraysEqual(out, [2, 4, 6, 8, 10])
+    }
+
+    Reduce_With4ParamCallback_ReducesArray() {
+        arr := [1, 1, 1, 1, 1]
+        arr.Reduce((a, b, i, self) => self[i] := a + b + i, 1)
+
+        Assert.ArraysEqual(arr, [3, 6, 10, 15, 21])
+    }
+
+    Reduce_WithUncallableCallback_ThrowsValueError() {
+        arr := [1, 2, 3]
+        Assert.Throws((*) => arr.Reduce({}), ValueError)
+    }
+
+    Reduce_WithCallbackWithTooFewParams_ThrowsValueError() {
+        arr := [1, 2, 3]
+        Assert.Throws((*) => arr.Reduce(a => a), ValueError)
+    }
+
+    Reduce_WithCallbackWithTooManyParams_ThrowsValueError() {
+        arr := [1, 2, 3]
+        Assert.Throws((*) => arr.Reduce((a, b, c, d, e) => a), ValueError)
+    }
+
+    Shift_ShiftsItem() {
+        arr := [1, 2, 3]
+        val := arr.Shift()
+
+        Assert.Equals(val, 1)
+        Assert.ArraysEqual(arr, [2, 3])
+    }
+
+    Unshift_WithOneValue_UnshiftsItem() {
+        arr := [1, 2, 3]
+        arr.Unshift(0)
+
+        Assert.ArraysEqual(arr, [0, 1, 2, 3])
+    }
+
+    Unshift_WithMultipleValues_UnshiftsItem() {
+        arr := [1, 2, 3]
+        arr.Unshift(-2, -1, 0)
+
+        Assert.ArraysEqual(arr, [-2, -1, 0, 1, 2, 3])
+    }
+
+    SequenceEquals_WithEqualSequencesAndDefaultComparator_ReturnsTrue() {
+        arr1 := [1, 2, 3], arr2 := [1, 2, 3]
+        YUnit.Assert(arr1.SequenceEquals(arr2))
+    }
+
+    SequenceEquals_WithUnqualSequencesAndDefaultComparator_ReturnsFalse() {
+        arr1 := [1, 2, 3], arr2 := [-1, -2, -3]
+        YUnit.Assert(!arr1.SequenceEquals(arr2))
+    }
+
+    SequenceEquals_WithCustomComparator_UsesIt() {
+        arr1 := [1, 2, 3], arr2 := [-1, -2, -3]
+        Yunit.Assert(arr1.SequenceEquals(arr2, (*) => true))
+    }
+
+    Fill_WithTwoPositiveIndices_FillsRange() {
+        arr := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        arr.Fill(0, 2, 4)
+
+        Assert.ArraysEqual(arr, [1, 0, 0, 0, 5, 6, 7, 8, 9, 10])
+    }
+
+    Fill_WithTwoNegativeIndices_FillsRange() {
+        arr := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        arr.Fill(0, -4, -2)
+
+        Assert.ArraysEqual(arr, [1, 2, 3, 4, 5, 6, 0, 0, 0, 10])
+    }
+
+    Fill_WithSinglePositiveIndex_FillsItemsToEnd() {
+        arr := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        arr.Fill(0, 5)
+
+        Assert.ArraysEqual(arr, [1, 2, 3, 4, 0, 0, 0, 0, 0, 0])
+    }
+
+    Fill_WithSingleNegativeIndex_FillsItemsToEnd() {
+        arr := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        arr.Fill(0, -4)
+
+        Assert.ArraysEqual(arr, [1, 2, 3, 4, 5, 6, 0, 0, 0, 0])
+    }
+
+    Fill_WithNoIndices_FillsEntireArray() {
+        arr := [1, 2, 3, 4, 5]
+        arr.Fill(0)
+
+        Assert.ArraysEqual(arr, [0, 0, 0, 0, 0])
+    }
+
+    Fill_WithInvalidIndices_ThrowsValueError() {
+        arr := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+        Assert.Throws((*) => arr.Fill(0, 5, 1), ValueError)
+        Assert.Throws((*) => arr.Fill(0, -1, -5), ValueError)
+    }
 }
 
 if(A_ScriptName == "ArrayExtensions.Test.ahk") {

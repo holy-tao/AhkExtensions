@@ -577,25 +577,3 @@ class ArrayExtensions {
 		}
 	}
 }
-
-;@Ahk2Exe-IgnoreBegin
-if(A_ScriptName == "ArrayExtensions.ahk") {
-    arr := Array(), arr.Length := Random(1, 20)
-	Loop(arr.Length) {
-		arr[A_Index] := Random(-100, 100)
-	}
-
-    FileAppend(String(arr.Filter((val) => val > 1)) "`n", "*")
-    FileAppend(String(arr.Slice(-3)) "`n", "*")
-	FileAppend(String(arr.Sorted((l, r) => l - r)) "`n", "*")
-	FileAppend(String(arr) "`n", "*")
-
-	test := Array(), test.Length := 5
-	test.Fill(1)
-	FileAppend(String(test) "`n", "*")
-	test.Fill(2, 2, 4)
-	FileAppend(String(test) "`n", "*")
-	test.Fill(5, -3, -1)
-	FileAppend(String(test) "`n", "*")
-}
-;@Ahk2Exe-IgnoreEnd
