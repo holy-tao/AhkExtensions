@@ -1,0 +1,59 @@
+name: Unit Tests
+
+on: 
+  push:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  test:
+    name: Unit Tests
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install AutoHotkey V2
+        uses: holy-tao/install-autohotkey@v1.2.2
+        
+      - name: Install Required Libraries
+        shell: pwsh
+        run: |
+          $url = "https://raw.githubusercontent.com/holy-tao/AhkWin32Projection/refs/heads/main/Scripts/Fetch-AhkWin32.ps1"
+          $outpath = "$PSScriptRoot\downloaded_script.ps1"
+
+          Invoke-WebRequest -Uri $url -OutFile $outpath
+
+          $types = @(
+            "Windows.Win32.Storage.FileSystem.Apis",
+            "Windows.Win32.Storage.FileSystem.BY_HANDLE_FILE_INFORMATION",
+            "Windows.Win32.Storage.FileSystem.FILE_FLAGS_AND_ATTRIBUTES",
+            "Windows.Win32.Storage.FileSystem.GETFINALPATHNAMEBYHANDLE_FLAGS",
+            "Windows.Win32.System.Time.Apis",
+            "Windows.Win32.System.Time.TIME_ZONE_INFORMATION",
+            "Windows.Win32.Foundation.SYSTEMTIME"
+          )
+
+          & $outpath -Types $types -OutDir "$PWD\tests\Lib\AhkWin32Projection" -Tag "" -Branch "main"
+
+      - name: Run Unit Tests
+        working-directory: tests
+        shell: powershell
+        run: AutoHotkey64.exe /ErrorStdOut RunTests.ahk
+
+      - name: Publish Test Results
+        if: always()
+        uses: mikepenz/action-junit-report@v6
+        with:
+          report_paths: tests/junit.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          detailed_summary: true
+          include_time_in_summary: true
+          include_passed: true
