@@ -12,6 +12,7 @@ class MapExtensions {
         Map.Prototype.DefineProp("Filter", { Call: (self, callback) => MapExtensions.Filter(self, callback) })
         Map.Prototype.DefineProp("All", { Call: (self, condition) => MapExtensions.All(self, condition)})
         Map.Prototype.DefineProp("Any", { Call: (self, condition?) => MapExtensions.Any(self, condition?)})
+        Map.Prototype.DefineProp("WithCaseSense", { Call: (self, val) => (self.CaseSense := val, self)})
     }
 
     /**

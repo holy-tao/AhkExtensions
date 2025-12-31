@@ -16,6 +16,14 @@ class MapExtensionTests {
         Assert.Equals(ci.Count, 0)
     }
 
+    WithCaseSense_SetsCaseSense() {
+        csOff := Map().WithCaseSense("Off")
+        csOn := Map().WithCaseSense("On")
+
+        Assert.Equals(csOff.CaseSense, "Off")
+        Assert.Equals(csOn.CaseSense, "Off")
+    }
+
     CaseInsensitive_WithStartingPairs_ReturnsCaseInsensitiveMap() {
         ci := Map.CaseInsensitive("one", 1, "two", 2)
 
