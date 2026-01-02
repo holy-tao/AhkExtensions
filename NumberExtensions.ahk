@@ -116,24 +116,28 @@ class FloatExtensions {
  */
 class NumberExtensions {
     static __New() {
-        __ObjDefineProp := Object.Prototype.DefineProp
+        NumDefineProp := Object.Prototype.DefineProp.Bind(Number.Prototype)
 
-        __ObjDefineProp(Number.Prototype, "Abs", { Call: (self) => Abs(self)})
-        __ObjDefineProp(Number.Prototype, "Round", { Call: (self, n := 0) => Round(self, n)})
-        __ObjDefineProp(Number.Prototype, "Ceil", { Call: (self) => Ceil(self)})
-        __ObjDefineProp(Number.Prototype, "Floor", { Call: (self) => Floor(self)})
-        __ObjDefineProp(Number.Prototype, "Exp", { Call: (self) => Exp(self)})
-        __ObjDefineProp(Number.Prototype, "Log", { Call: (self) => Log(self)})
-        __ObjDefineProp(Number.Prototype, "Ln", { Call: (self) => Ln(self)})
-        __ObjDefineProp(Number.Prototype, "Sqrt", { Call: (self) => Sqrt(self)})
-        __ObjDefineProp(Number.Prototype, "Mod", { Call: (self, other) => Mod(self, other)})
+        NumDefineProp("Abs", { Call: (self) => Abs(self)})
+        NumDefineProp("Round", { Call: (self, n := 0) => Round(self, n)})
+        NumDefineProp("Ceil", { Call: (self) => Ceil(self)})
+        NumDefineProp("Floor", { Call: (self) => Floor(self)})
+        NumDefineProp("Exp", { Call: (self) => Exp(self)})
+        NumDefineProp("Log", { Call: (self) => Log(self)})
+        NumDefineProp("Ln", { Call: (self) => Ln(self)})
+        NumDefineProp("Sqrt", { Call: (self) => Sqrt(self)})
+        NumDefineProp("Mod", { Call: (self, other) => Mod(self, other)})
 
-        __ObjDefineProp(Number.Prototype, "Sin", { Call: (self) => Sin(self)})
-        __ObjDefineProp(Number.Prototype, "Cos", { Call: (self) => Cos(self)})
-        __ObjDefineProp(Number.Prototype, "Tan", { Call: (self) => Tan(self)})
-        __ObjDefineProp(Number.Prototype, "ASin", { Call: (self) => ASin(self)})
-        __ObjDefineProp(Number.Prototype, "ACos", { Call: (self) => ACos(self)})
-        __ObjDefineProp(Number.Prototype, "ATan", { Call: (self) => ATan(self)})
+        NumDefineProp("Sin", { Call: (self) => Sin(self)})
+        NumDefineProp("Cos", { Call: (self) => Cos(self)})
+        NumDefineProp("Tan", { Call: (self) => Tan(self)})
+        NumDefineProp("ASin", { Call: (self) => ASin(self)})
+        NumDefineProp("ACos", { Call: (self) => ACos(self)})
+        NumDefineProp("ATan", { Call: (self) => ATan(self)})
+
+        NumDefineProp("Clamp", { Call: (self, minVal, maxVal) => Max(minVal, Min(self, maxVal))})
+
+        Number.DefineProp("Clamp", { Call: (self, num, minVal, maxVal) => Max(minVal, Min(num, maxVal))})
     }
 }
 
