@@ -293,7 +293,7 @@ class ArrayExtensions {
 				return item
 		}
         
-        throw TargetError("Array contains no elements matching the provided condition", -1)
+        throw TargetError("Array contains no elements matching the provided condition", -2, String(arr))
     }
 
 	/**
@@ -318,7 +318,7 @@ class ArrayExtensions {
 					found := item
 				}
 				else{
-					throw TargetError("Array contains more than one element matching the provided condition", -1)
+					throw TargetError("Array contains more than one element matching the provided condition", -2, String(arr))
 				}
 			}
 		}
@@ -346,13 +346,13 @@ class ArrayExtensions {
 					found := item
 				}
 				else{
-					throw TargetError("Array contains more than one element matching the provided condition", -1)
+					throw TargetError("Array contains more than one element matching the provided condition", -2, String(arr))
 				}
 			}
 		}
 
 		if(!IsSet(found)) {
-			throw TargetError("Array contains no elements matching the provided condition", -1) 
+			throw TargetError("Array contains no elements matching the provided condition", -2, String(arr)) 
 		}
 
 		return found
@@ -429,7 +429,7 @@ class ArrayExtensions {
 		end := Integer(end ?? (start < 0? -1 : arr.length))
 
 		if(end < start){
-			throw ValueError("Invalid slice - end must refer to an index after start", -1, start . " to " . end)
+			throw ValueError("Invalid slice - end must refer to an index after start", -2, start . " to " . end)
 		}
 
 		sliced := [], sliced.Length := Abs(end - start) + 1
@@ -537,11 +537,11 @@ class ArrayExtensions {
 		}
 
 		if(!(callback is Func)){
-			throw ValueError("Invalid reducer callback: Expected a Func, but got a(n) " . Type(callback), -1)
+			throw ValueError("Invalid reducer callback: Expected a Func, but got a(n) " . Type(callback), -2, callback)
 		}
 
 		if(!callback.IsVariadic && (callback.MaxParams < 2 || callback.MinParams > 4)){
-			throw ValueError("Invalid reducer callback: Callback must accept between 2 and 4 parameters", -1)
+			throw ValueError("Invalid reducer callback: Callback must accept between 2 and 4 parameters", -2, callback)
 		}
 
 		;if the function is variadic, MaxParams is the maximum number of params until we hit the variadic
@@ -620,7 +620,7 @@ class ArrayExtensions {
 		end := Integer(end ?? (start < 0? -1 : arr.length))
 
 		if(end < start){
-			throw ValueError("Invalid range - end must refer to an index after start", -1, start . " to " . end)
+			throw ValueError("Invalid range - end must refer to an index after start", -2, start . " to " . end)
 		}
 
 		Loop(Abs(end - start) + 1){
