@@ -25,6 +25,8 @@ class ArrayExtensions {
 		Array.Prototype.DefineProp("ForEach", { Call: (this, callback) => ArrayExtensions.ForEach(this, callback) })
 		Array.Prototype.DefineProp("First", { Call: (this, condition?) => ArrayExtensions.First(this, condition?) })
 		Array.Prototype.DefineProp("FirstOrDefault", { Call: (this, condition?, default?) => ArrayExtensions.FirstOrDefault(this, condition?, default?) })
+		Array.Prototype.DefineProp("Last", { Call: (this, condition?) => ArrayExtensions.Last(this, condition?) })
+		Array.Prototype.DefineProp("LastOrDefault", { Call: (this, condition?, default?) => ArrayExtensions.LastOrDefault(this, condition?, default?) })
 		Array.Prototype.DefineProp("Single", { Call: (this, condition?) => ArrayExtensions.Single(this, condition?) })
 		Array.Prototype.DefineProp("SingleOrDefault", { Call: (this, condition?, default?) => ArrayExtensions.SingleOrDefault(this, condition?, default?) })
 		Array.Prototype.DefineProp("Map", { Call: (this, mapper) => ArrayExtensions.Map(this, mapper) })
@@ -237,6 +239,56 @@ class ArrayExtensions {
         condition := condition ?? (*) => true ; If no condition just take first
         
         for(item in arr){
+			if(match := condition.Call(item))
+				return item
+		}
+        
+        throw TargetError("Array contains no elements matching the provided condition", -1)
+    }
+
+	/**
+	 * Checks each item in an array in reverse order and returns the last that satisfies some condition,
+	 * or else the array's {@link https://www.autohotkey.com/docs/v2/lib/Array.htm#Default|default value}.
+	 * If the array has no default value, an {@link https://www.autohotkey.com/docs/v2/lib/Error.htm#UnsetError|`UnsetError`}
+	 * is thrown.
+	 * 
+	 * @param {Array<Any>} arr The array to check
+	 * @param {Func (Any) => Boolean} condition The condition that the value must satisfy to be returned.
+	 * 			If unset, the method simply returns the last value. This function must take a value
+	 * 			of the type contained in `arr` and return a boolean.
+     * @param {Any} default the default value to return if no value matches `conditon`. If unset, the
+     *          method falls back to arr.default
+	 * @returns {Any} the last vaue in `arr` that satisfies `conditon`, or a default value if none exist
+	 */
+	static LastOrDefault(arr, condition?, default?) {
+		condition := condition ?? (*) => true	;If no condition just take last
+
+		Loop(arr.Length) {
+			index := arr.Length - (A_Index - 1)
+			item := arr[index]
+			if(match := condition.Call(item))
+				return item
+		}
+        
+        return default ?? arr.Default
+	}
+    
+    /**
+	 * Returns the last value in `arr` which satisfies some condition. 
+	 * 
+	 * @param {Array<Any>} arr The array to check
+	 * @param {Func (Any) => Boolean} condition The condition that the value must satisfy to be returned.
+	 * 			If unset, the method simply returns the last value. This function must take a value
+	 * 			of the type contained in `arr` and return a boolean.
+	 * @throws {TargetError} if no value in `arr` satisfies `condition`
+	 * @returns {Any} the last vaue in `arr` that satisfies `conditon`
+	 */
+    static Last(arr, condition?) {
+        condition := condition ?? (*) => true ; If no condition just take last
+        
+		Loop(arr.Length) {
+			index := arr.Length - (A_Index - 1)
+			item := arr[index]
 			if(match := condition.Call(item))
 				return item
 		}

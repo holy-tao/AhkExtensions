@@ -141,6 +141,67 @@ class ArrayExtensionTests {
         Assert.Throws((*) => arr.First(), TargetError)
     }
 
+    LastOrDefault_WithMatchingElement_FindsElement() {
+        arr := [1, 2, 3, 4, 5]
+
+        result := arr.LastOrDefault((el) => el > 3)
+        Assert.Equals(result, 5)
+    }
+
+    LastOrDefault_WithNoMatchingElement_ReturnsArrayDefault() {
+        arr := [1, 2, 3, 4, 5]
+        arr.Default := -1
+
+        result := arr.LastOrDefault((el) => el > 5)
+        Assert.Equals(result, -1)
+    }
+
+    LastOrDefault_WithNoMatchingElementAndProvidedDefault_ReturnsProvidedDefault() {
+        arr := [1, 2, 3, 4, 5]
+
+        result := arr.LastOrDefault((el) => el > 5, -1)
+        Assert.Equals(result, -1)
+    }
+
+    LastOrDefault_WithNoMatchingElement_PrefersProvidedDefault() {
+        arr := [1, 2, 3, 4, 5]
+        arr.Default := -1
+
+        result := arr.LastOrDefault((el) => el > 5, 99)
+        Assert.Equals(result, 99)
+    }
+
+    LastOrDefault_WithNoDefaultAndNoProvidedDefault_ThrowsUnsetError() {
+        arr := [1, 2, 3, 4, 5]
+        Assert.Throws((*) => arr.LastOrDefault(el => el > 5), UnsetError)
+    }
+
+    LastOrDefault_WithNoCondition_ReturnsLastElement() {
+        arr := [1, 2, 3, 4, 5]
+        Assert.Equals(arr.LastOrDefault(), 5)
+    }
+
+    Last_WithMatchingElement_FindsElement() {
+        arr := [1, 2, 3, 4, 5]
+        result := arr.Last(el => el > 3)
+        Assert.Equals(result, 5)
+    }
+
+    Last_WithNoMatchingElement_ThrowsTargetError() {
+        arr := [1, 2, 3, 4, 5]
+        Assert.Throws((*) => arr.Last(el => el > 10), TargetError)
+    }
+
+    Last_WithNoCondition_ReturnsLastElement() {
+        arr := [1, 2, 3, 4, 5]
+        Assert.Equals(arr.Last(), 5)
+    }
+
+    Last_WithEmptyArray_ThrowsTargetError() {
+        arr := []
+        Assert.Throws((*) => arr.Last(), TargetError)
+    }
+
     SingleOrDefault_WithSingleMatchingElement_ReturnsIt() {
         arr := [1, 2, 3, 4, 5]
         result := arr.SingleOrDefault(el => el > 4)
