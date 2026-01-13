@@ -21,7 +21,7 @@ jobs:
           submodules: recursive
 
       - name: Install AutoHotkey V2
-        uses: holy-tao/install-autohotkey@v1.2.2
+        uses: holy-tao/install-autohotkey@v1.3.0
         
       - name: Install Required Libraries
         shell: pwsh
