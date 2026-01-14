@@ -8,12 +8,16 @@
 #Include ArrayExtensions.Test.ahk
 #include MapExtensions.Test.ahk
 #Include BufferExtensions.Test.ahk
+#Include NumberExtensions.test.ahk
 
 YUnit.Use(YunitResultCounter, YUnitJUnit, YUnitStdOut).Test(
     FileExtensionTests,
     ArrayExtensionTests,
     BufferExtensionTests,
-    MapExtensions
+    MapExtensions,
+    IntegerExtensionTests,
+    FloatExtensionTests,
+    NumberExtensionTests
 )
 
 Exit(-YunitResultCounter.failures)
