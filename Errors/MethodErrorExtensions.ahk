@@ -37,6 +37,9 @@ class MethodErrorExtensions {
     }
 }
 
+/**
+ * Thrown when a method is not implemented
+ */
 class NotImplementedError extends MethodError {
-    ; stub, just for type checking / logging
+
 }

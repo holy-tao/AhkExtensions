@@ -99,3 +99,25 @@ class ValueErrorExtensions {
         }
     }
 }
+
+/**
+ * An error for when a String or other value which must follow a specific pattern is improperly formatted
+ */
+class FormatError extends ValueError {
+
+    /**
+     * Throws a `FormatError` if `val` does not match a regex pattern
+     * 
+     * @param {String} val the value to check 
+     * @param {String} pattern the pattern it must match 
+     * @param {Integer} stackLevel Stack level at which to throw the error (default: -2)
+     * @returns {RegExMatchInfo} if `val` matches `pattern`, returns the `RegExMatchInfo`
+     */
+    static ThrowIfDoesNotMatch(val, pattern, stackLevel := -2) {
+        if(!RegExMatch(val, pattern, &info := "")) {
+            throw FormatError("Value is improperly formatted", stackLevel, val)
+        }
+
+        return info
+    }
+}
