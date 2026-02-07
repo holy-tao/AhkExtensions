@@ -7,6 +7,7 @@ class IndexErrorExtensions {
 
     static __New() {
         IndexError.DefineProp("ThrowIfOutOfRange", { Call: IndexErrorExtensions.ThrowIfOutOfRange })
+        IndexError.DefineProp("ThrowIfNotKey", { Call: IndexErrorExtensions.ThrowIfNotKey })
     }
 
     /**
@@ -21,6 +22,15 @@ class IndexErrorExtensions {
         if(value < min || value > max){
             msg := Format("Index out of range ({1} - {2})", min, max)
             throw IndexError(msg, stackLevel, value)
+        }
+    }
+
+    /**
+     * Throws an IndexError if `forMap.Has(value)` returns false
+     */
+    static ThrowIfNotKey(value, forMap, stackLevel := -2) {
+        if(!forMap.Has(value)) {
+            throw IndexError(Type(forMap) " has no such key", stackLevel, value)
         }
     }
 }
