@@ -5,14 +5,37 @@
  * 
  * In addition to holding extension methods, including this class gives all classes extending `Error` and `Inner` 
  * property that allows them to be thrown as a result of other Errors. This is printed in `Format()` and `ToString`
- * along with the outer error if it is not empty (which it is by default)
+ * along with the outer error if it is not empty (which it is by default). Inner can be set easily by calling
+ * `WithInner`
+ * 
+ * This also adds some stuff to work around restrictions on the throw keyword. For example, this is a common thing
+ * to want to do in C#, but is a syntax error in AHK
+ * 
+ *      return condition ? output : throw Error("the condition was false")
+ * 
+ * So this adds a static and instance `Throw` method that allow for error throwing in places like ternary expressions
+ * and comma-separated statements where it would otherwise be illegal:
+ * 
+ *      return condition ? output : ValueError("the condition was false").Throw()
+ * 
+ *      MyThing.OnTimedOut((msg) => (operation.Cancel(), TimeoutError.Throw(msg)))
+ * 
+ * The instance version allows for chaining with `WithInner` and any future stuff I might add:
+ * 
+ *      catch Error as err {
+ *          ; You could also use the throw keyword here
+ *          Error("An error occurred while doing the task").WithInner(err).Throw()
+ *      }
  */
 class ErrorExtensions {
 
     static __New() {
+        Error.DefineProp("Throw", {Call: (args*) => ErrorExtensions.Throw(args*) })
         Error.DefineProp("ThrowIf", {Call: (args*) => ErrorExtensions.ThrowIf(args*) })
 
         Error.Prototype.DefineProp("Inner", {Value: "" })
+        Error.Prototype.DefineProp("WithInner", { Call: (self, inner) => ErrorExtensions.WithInner(self, inner)})
+        Error.Prototype.DefineProp("Throw", { Call: (self) => ErrorExtensions.ThrowSelf(self)})
         Error.Prototype.DefineProp("Format", {Call: (self) => ErrorExtensions.Format(self) })
         Error.Prototype.DefineProp("ToString", {Call: (self) => ErrorExtensions.Format(self) })
         Error.Prototype.DefineProp("GetContext", {Call: (self, lines?) => ErrorExtensions.GetContext(self, lines?) })
@@ -32,6 +55,45 @@ class ErrorExtensions {
     static ThrowIf(self, condition, message, extra := "", stackLevel := -2) {
         if(condition)
             throw self.Call(message, stackLevel, extra)
+    }
+
+    /**
+     * Unconditionally throws an Error of the type of the class on which this method is called. Allows for
+     * throws in e.g. ternary expressions:
+     * 
+     *      this := condition ? that : Error.Throw("condition was false")
+     * 
+     * @param {String} message the error message
+     * @param {Any} extra the error's `extra` property 
+     * @param {String | Integer} what the error's `what` property 
+     */
+    static Throw(self, message, extra := "", what := -2) {
+        throw self.Call(message, what, extra)
+    }
+
+    /**
+     * For chaining
+     *  
+     *      catch Error as err {
+     *          throw Error("An error occurred while doing the task").WithInner(err)
+     *      }
+     */
+    static WithInner(self, inner) {
+        self.Inner := inner
+        return self
+    }
+
+    /**
+     * Alternative to static `Throw`, allows chaining:
+     * 
+     *      return (err is UnsetError)? "": Error("The value was unset").WithInner(err).Throw()
+     * 
+     * Useful since the throw keyword can't be used in e.g. ternary expressions directly
+     * 
+     * @param self 
+     */
+    static ThrowSelf(self) {
+        throw self
     }
 
     /**

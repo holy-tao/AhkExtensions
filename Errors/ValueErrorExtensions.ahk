@@ -19,6 +19,7 @@ class ValueErrorExtensions {
         ValueError.DefineProp("ThrowIfLessThanOrEqualTo", { Call: ValueErrorExtensions.ThrowIfLessThanOrEqualTo })
         ValueError.DefineProp("ThrowIfStringIsEmpty", { Call: ValueErrorExtensions.ThrowIfStringIsEmpty })
         ValueError.DefineProp("ThrowIfOutOfRange", { Call: ValueErrorExtensions.ThrowIfOutOfRange })
+        ValueError.DefineProp("ThrowIfEqualsAny", { Call: ValueErrorExtensions.ThrowIfEqualsAny })
     }
 
     static ThrowIfNegative(value, argName, stackLevel := -2) {
@@ -82,6 +83,31 @@ class ValueErrorExtensions {
     static ThrowIfStringIsEmpty(str, argName, stackLevel := -2) {
         if(IsSpace(str))
             throw ValueError(argName " must not be empty or whitespace", stackLevel, '"' str '"')
+    }
+
+    /**
+     * Throws a ValueError if `val` is equal to any member of `values` according to the == operator
+     * 
+     * @param {Any} val the value to check 
+     * @param {String} argName argument name for error messages 
+     * @param {Array<Any>} values variadic array of illegal values for `val` 
+     */
+    static ThrowIfEqualsAny(val, argName, values*) {
+        for (item in values) {
+            if(item == val) {
+
+                for(item in values) {
+                    arrStr .= (item is String) ? 
+                        '"' item '"' : 
+                        (item is Primitive || HasMethod(item, "ToString", 0)) ? String(item) : Type(item)
+
+                    if(A_Index < values.Length)
+                        arrStr .= ", "
+                }
+
+                throw ValueError(Format("{1} cannot be any of [{2}]", argName, arrStr), -2, val)
+            }
+        }
     }
 
     /**
