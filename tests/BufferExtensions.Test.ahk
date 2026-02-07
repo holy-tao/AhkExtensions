@@ -66,7 +66,7 @@ class BufferExtensionTests {
             NumPut("uchar", +("0x" A_Index*2), buf, A_Index-1)
         }
 
-        Assert.Equals(buf.HexDump(), '02 04 06 08 10 12 14 16  18 20 22 24 26 28 30 32  |......... "$&(02|`n')
+        Assert.Equals(buf.HexDump(), '0000	02 04 06 08 10 12 14 16  18 20 22 24 26 28 30 32   ......... "$&(02`r`n')
     }
 
     Enum_WithOneVar_EnumeratesValues() {
@@ -176,5 +176,103 @@ class BufferExtensionTests {
         buf1 := Buffer(4, 0), buf2 := Buffer(4, 0)
         NumPut("uchar", 0x42, buf2, 2)
         Assert.Equals(buf1.MemoryEquals(buf2), false)
+    }
+
+    Hash_WithSHA256_ReturnsCorrectHash() {
+        ; Test vector: "hello" -> SHA256
+        buf := Buffer.FromString("hello")
+        hash := buf.Hash("SHA256")
+        expected := "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+
+        Assert.Equals(hash.ToHex(0x40000000), expected)
+    }
+
+    Hash_WithSHA1_ReturnsCorrectHash() {
+        ; Test vector: "hello" -> SHA1
+        buf := Buffer.FromString("hello")
+        hash := buf.Hash("SHA1")
+        expected := "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d"
+
+        Assert.Equals(hash.ToHex(0x40000000), expected)
+    }
+
+    Hash_WithMD5_ReturnsCorrectHash() {
+        ; Test vector: "hello" -> MD5
+        buf := Buffer.FromString("hello")
+        hash := buf.Hash("MD5")
+        expected := "5d41402abc4b2a76b9719d911017c592"
+
+        Assert.Equals(hash.ToHex(0x40000000), expected)
+    }
+
+    Hash_WithEmptyBuffer_ReturnsCorrectHash() {
+        ; Test vector: empty string -> SHA256
+        buf := Buffer(0)
+        hash := buf.Hash("SHA256")
+        expected := "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+
+        Assert.Equals(hash.ToHex(0x40000000), expected)
+    }
+
+    Hash_WithLongString_ReturnsCorrectHash() {
+        ; Test vector: "The quick brown fox jumps over the lazy dog" -> SHA256
+        buf := Buffer.FromString("The quick brown fox jumps over the lazy dog")
+        hash := buf.Hash("SHA256")
+        expected := "d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592"
+
+        Assert.Equals(hash.ToHex(0x40000000), expected)
+    }
+
+    UUIDv5_GeneratesValidGuid() {
+        buf := Buffer.FromString("test data")
+        uuid := buf.UUIDv5()
+
+        ; Verify it returns a Guid object
+        Assert.IsType(uuid, Guid)
+    }
+
+    UUIDv5_HasCorrectVersionBits() {
+        buf := Buffer.FromString("test data")
+        uuid := buf.UUIDv5()
+
+        FileAppend("UUID raw: " uuid.__buf.ToHex(0x40000000) "`n", "*")
+        FileAppend("UUID formatted: " uuid.ToString() "`n", "*")
+
+        ; Version should be 5 (upper nibble of byte 6 should be 0x5)
+        versionByte := uuid.__buf[6]
+        Assert.Equals(versionByte & 0xF0, 0x50)
+    }
+
+    UUIDv5_HasCorrectVariantBits() {
+        buf := Buffer.FromString("test data")
+        uuid := buf.UUIDv5()
+
+        FileAppend("UUID raw: " uuid.__buf.ToHex(0x40000000) "`n", "*")
+        FileAppend("UUID formatted: " uuid.ToString() "`n", "*")
+
+        ; Variant should be RFC 4122 (bits 10xxxxxx at byte 8)
+        variantByte := uuid.__buf[8]
+        Assert.Equals(variantByte & 0xC0, 0x80)
+    }
+
+    UUIDv5_IsDeterministic() {
+        ; Same input should always produce the same UUID
+        buf1 := Buffer.FromString("deterministic test")
+        buf2 := Buffer.FromString("deterministic test")
+
+        uuid1 := buf1.UUIDv5()
+        uuid2 := buf2.UUIDv5()
+
+        Assert.Equals(uuid1.ToString(), uuid2.ToString())
+    }
+
+    UUIDv5_DifferentInputsProduceDifferentUUIDs() {
+        buf1 := Buffer.FromString("test1")
+        buf2 := Buffer.FromString("test2")
+
+        uuid1 := buf1.UUIDv5()
+        uuid2 := buf2.UUIDv5()
+
+        Assert.NotEquals(uuid1.ToString(), uuid2.ToString())
     }
 }
