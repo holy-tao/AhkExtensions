@@ -67,11 +67,18 @@ class StringExtensions {
         StrDefineProp("IndexOf", { Call: (self, needle, caseSense := true) => InStr(self, needle, caseSense, 1) })
         StrDefineProp("LastIndexOf", { Call: (self, needle, caseSense := true) => InStr(self, needle, caseSense, -1) })
         StrDefineProp("StartsWith", { Call: (self, needle, caseSense := true) => InStr(self, needle, caseSense) == 1 })
-        StrDefineProp("EndsWith", { Call: (self, needle, caseSense := true) => InStr(self, needle, caseSense, -1) == StrLen(self) - StrLen(needle) + 1 })
+        StrDefineProp("EndsWith", { Call: (self, needle, caseSense := true) => (
+            StrLen(self) >= StrLen(needle) && 
+            InStr(self, needle, caseSense, -1) == StrLen(self) - StrLen(needle) + 1)
+        })
         StrDefineProp("Contains", { Call: (self, needle, caseSense := true) => InStr(self, needle, caseSense) > 0 })
 
         StrDefineProp("__Item", { Get: (self, start, end := start) => SubStr(self, start, (end - start) + 1)})
         StrDefineProp("__Enum", { Call: (self, varCount) => StringExtensions.StrEnum(self, varCount)})
+
+        ; Static variants
+        String.DefineProp("Join", { Call: (self, delimiter, strs*) => StringExtensions.Join(delimiter, strs*) })
+        String.DefineProp("Repeat", { Call: (self, str, count) => StringExtensions.Repeat(str, count) })
     }
 
     /**
