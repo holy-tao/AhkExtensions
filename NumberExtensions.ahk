@@ -25,7 +25,7 @@ class IntegerExtensions {
  */
 class FloatExtensions {
     static __New() {
-        __ObjDefineProp := Object.Prototype.DefineProp
+        Float.Prototype.DefineProp := Object.Prototype.DefineProp
 
         ; Static methods
         Float.DefineProp("FromBits", { Get: (self, bits) => FloatExtensions.FromBits(bits) })
@@ -35,9 +35,9 @@ class FloatExtensions {
         Float.DefineProp("Truncate", { Call: (self, val, places) => FloatExtensions.Truncate(val, places) })
 
         ; Instance methods - this does work, even if it looks funny. E.g.:
-        __ObjDefineProp(Float.Prototype, "IsNaN", { Get: (self) => self != self })
-        __ObjDefineProp(Float.Prototype, "IsInfinity", { Get: (self) => !self.IsNan && Abs(self) == Float.PositiveInfinity })
-        __ObjDefineProp(Float.Prototype, "Truncate", { Call: (self, places) => FloatExtensions.Truncate(self, places) })
+        Float.Prototype.DefineProp("IsNaN", { Get: (self) => self != self })
+        Float.Prototype.DefineProp("IsInfinity", { Get: (self) => !self.IsNan && Abs(self) == Float.PositiveInfinity })
+        Float.Prototype.DefineProp("Truncate", { Call: (self, places) => FloatExtensions.Truncate(self, places) })
 
         ; 64-bit float constants
         Float.DefineProp("Max", { Get: (self) => FloatExtensions.FromBits(0x7FEFFFFFFFFFFFFF) })
@@ -116,29 +116,29 @@ class FloatExtensions {
  */
 class NumberExtensions {
     static __New() {
-        NumDefineProp := Object.Prototype.DefineProp.Bind(Number.Prototype)
+        Number.Prototype.DefineProp := Object.Prototype.DefineProp
 
-        NumDefineProp("IsInteger", { Get: IsInteger})
-        NumDefineProp("IsFloat", { Get: IsFloat })
+        Number.Prototype.DefineProp("IsInteger", { Get: IsInteger})
+        Number.Prototype.DefineProp("IsFloat", { Get: IsFloat })
 
-        NumDefineProp("Abs", { Call: Abs })
-        NumDefineProp("Round", { Call: Round })
-        NumDefineProp("Ceil", { Call: Ceil })
-        NumDefineProp("Floor", { Call: Floor })
-        NumDefineProp("Exp", { Call: Exp })
-        NumDefineProp("Log", { Call: Log })
-        NumDefineProp("Ln", { Call: Ln })
-        NumDefineProp("Sqrt", { Call: Sqrt })
-        NumDefineProp("Mod", { Call: Mod })
+        Number.Prototype.DefineProp("Abs", { Call: Abs })
+        Number.Prototype.DefineProp("Round", { Call: Round })
+        Number.Prototype.DefineProp("Ceil", { Call: Ceil })
+        Number.Prototype.DefineProp("Floor", { Call: Floor })
+        Number.Prototype.DefineProp("Exp", { Call: Exp })
+        Number.Prototype.DefineProp("Log", { Call: Log })
+        Number.Prototype.DefineProp("Ln", { Call: Ln })
+        Number.Prototype.DefineProp("Sqrt", { Call: Sqrt })
+        Number.Prototype.DefineProp("Mod", { Call: Mod })
 
-        NumDefineProp("Sin", { Call: Sin })
-        NumDefineProp("Cos", { Call: Cos })
-        NumDefineProp("Tan", { Call: Tan })
-        NumDefineProp("ASin", { Call: ASin })
-        NumDefineProp("ACos", { Call: ACos })
-        NumDefineProp("ATan", { Call: ATan })
+        Number.Prototype.DefineProp("Sin", { Call: Sin })
+        Number.Prototype.DefineProp("Cos", { Call: Cos })
+        Number.Prototype.DefineProp("Tan", { Call: Tan })
+        Number.Prototype.DefineProp("ASin", { Call: ASin })
+        Number.Prototype.DefineProp("ACos", { Call: ACos })
+        Number.Prototype.DefineProp("ATan", { Call: ATan })
 
-        NumDefineProp("Clamp", { Call: (self, minVal, maxVal) => Max(minVal, Min(self, maxVal))})
+        Number.Prototype.DefineProp("Clamp", { Call: (self, minVal, maxVal) => Max(minVal, Min(self, maxVal))})
 
         Number.DefineProp("Clamp", { Call: (self, num, minVal, maxVal) => Max(minVal, Min(num, maxVal))})
     }

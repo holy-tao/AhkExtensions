@@ -4,77 +4,77 @@
 
 class StringExtensions {
     static __New() {
-        StrDefineProp := Object.Prototype.DefineProp.Bind(String.Prototype)
+        String.Prototype.DefineProp := Object.Prototype.DefineProp
 
         ; Builtins - most of these can redirect directly to the builtin. Syntax is identical to the builtin, but
         ; without the first argument
-        StrDefineProp("Length", { Get: StrLen })
-        StrDefineProp("Ptr", { Get: StrPtr })
+        String.Prototype.DefineProp("Length", { Get: StrLen })
+        String.Prototype.DefineProp("Ptr", { Get: StrPtr })
 
-        StrDefineProp("Split", { Call: StrSplit })
-        StrDefineProp("Replace", { Call: StrReplace })
-        StrDefineProp("RegExReplace", { Call: RegExReplace })
-        StrDefineProp("Find", { Call: InStr })
-        StrDefineProp("CompareTo", { Call: StrCompare })
-        StrDefineProp("Sort", { Call: Sort })
-        StrDefineProp("SubStr", { Call: SubStr })
-        StrDefineProp("Ord", { Call: Ord })         ; https://www.autohotkey.com/docs/v2/lib/Ord.htm
+        String.Prototype.DefineProp("Split", { Call: StrSplit })
+        String.Prototype.DefineProp("Replace", { Call: StrReplace })
+        String.Prototype.DefineProp("RegExReplace", { Call: RegExReplace })
+        String.Prototype.DefineProp("Find", { Call: InStr })
+        String.Prototype.DefineProp("CompareTo", { Call: StrCompare })
+        String.Prototype.DefineProp("Sort", { Call: Sort })
+        String.Prototype.DefineProp("SubStr", { Call: SubStr })
+        String.Prototype.DefineProp("Ord", { Call: Ord })         ; https://www.autohotkey.com/docs/v2/lib/Ord.htm
 
         ; Is functions: https://www.autohotkey.com/docs/v2/lib/Is.htm#cat-string
-        StrDefineProp("IsDigit", { Get: IsDigit })
-        StrDefineProp("IsXDigit", { Get: IsXDigit })
-        StrDefineProp("IsAlpha", { Get: IsAlpha })
-        StrDefineProp("IsUpper", { Get: IsUpper })
-        StrDefineProp("IsLower", { Get: IsLower })
-        StrDefineProp("IsAlnum", { Get: IsAlnum })
-        StrDefineProp("IsSpace", { Get: IsSpace })
-        StrDefineProp("IsTime", { Get: IsTime })
+        String.Prototype.DefineProp("IsDigit", { Get: IsDigit })
+        String.Prototype.DefineProp("IsXDigit", { Get: IsXDigit })
+        String.Prototype.DefineProp("IsAlpha", { Get: IsAlpha })
+        String.Prototype.DefineProp("IsUpper", { Get: IsUpper })
+        String.Prototype.DefineProp("IsLower", { Get: IsLower })
+        String.Prototype.DefineProp("IsAlnum", { Get: IsAlnum })
+        String.Prototype.DefineProp("IsSpace", { Get: IsSpace })
+        String.Prototype.DefineProp("IsTime", { Get: IsTime })
 
-        StrDefineProp("IsInteger", { Get: IsInteger })
-        StrDefineProp("IsNumber", { Get: IsNumber })
-        StrDefineProp("IsFloat", { Get: IsFloat })
-        StrDefineProp("IsLabel", { Get: IsLabel })
+        String.Prototype.DefineProp("IsInteger", { Get: IsInteger })
+        String.Prototype.DefineProp("IsNumber", { Get: IsNumber })
+        String.Prototype.DefineProp("IsFloat", { Get: IsFloat })
+        String.Prototype.DefineProp("IsLabel", { Get: IsLabel })
 
-        StrDefineProp("IsWhitespace", { Get: (self) => IsSpace(self) && (StrLen(self) > 0) })
-        StrDefineProp("IsEmpty", { Get: (self) => StrLen(self) > 0 })
+        String.Prototype.DefineProp("IsWhitespace", { Get: (self) => IsSpace(self) && (StrLen(self) > 0) })
+        String.Prototype.DefineProp("IsEmpty", { Get: (self) => StrLen(self) > 0 })
 
         ; Case: https://www.autohotkey.com/docs/v2/lib/StrLower.htm
-        StrDefineProp("ToUpper", { Call: StrUpper })
-        StrDefineProp("ToLower", { Call: StrLower })
-        StrDefineProp("ToTitle", { Call: StrTitle })
+        String.Prototype.DefineProp("ToUpper", { Call: StrUpper })
+        String.Prototype.DefineProp("ToLower", { Call: StrLower })
+        String.Prototype.DefineProp("ToTitle", { Call: StrTitle })
 
         ; Trim: https://www.autohotkey.com/docs/v2/lib/Trim.htm
-        StrDefineProp("Trim", { Call: Trim })
-        StrDefineProp("LTrim", { Call: LTrim })
-        StrDefineProp("RTrim", { Call: RTrim })
+        String.Prototype.DefineProp("Trim", { Call: Trim })
+        String.Prototype.DefineProp("LTrim", { Call: LTrim })
+        String.Prototype.DefineProp("RTrim", { Call: RTrim })
 
         ; https://www.autohotkey.com/docs/v2/lib/SplitPath.htm
-        StrDefineProp("SplitPath", { Call: (self) => (SplitPath(self, &a1, &a2, &a3, &a4, &a5), {FileName: a1, Dir: a2, Ext: a3, NameNoExt: a4, Drive: a5}) })
+        String.Prototype.DefineProp("SplitPath", { Call: (self) => (SplitPath(self, &a1, &a2, &a3, &a4, &a5), {FileName: a1, Dir: a2, Ext: a3, NameNoExt: a4, Drive: a5}) })
 
         ; https://www.autohotkey.com/docs/v2/lib/RegExMatch.htm - returns match on success, empty string on failure
         ; Since objects are truthy, if("string".RegExMatch(regex)) works as expected
-        StrDefineProp("RegExMatch", { Call: (self, needleRegEx, startingPos?) => (RegExMatch(self, needleRegEx , &match := 0, startingPos?) ? match : "")})
+        String.Prototype.DefineProp("RegExMatch", { Call: (self, needleRegEx, startingPos?) => (RegExMatch(self, needleRegEx , &match := 0, startingPos?) ? match : "")})
 
-        StrDefineProp("Join", { Call: (self, strs*) => StringExtensions.Join(self, strs*) })
-        StrDefineProp("Repeat", { Call: (self, count) => StringExtensions.Repeat(self, count) })
-        StrDefineProp("Reverse", { Call: (self) => StringExtensions.Reverse(self) })
-        StrDefineProp("LPad", { Call: (self, toLength, char?) => StringExtensions.LPad(self, toLength, char?) })
-        StrDefineProp("RPad", { Call: (self, toLength, char?) => StringExtensions.RPad(self, toLength, char?) })
-        StrDefineProp("Insert", { Call: (self, insertion, pos) => SubStr(self, 1, pos) . insertion . SubStr(self, pos + 1) })
-        StrDefineProp("Remove", { Call: (self, start, length) => SubStr(self, 1, start - 1) . SubStr(self, start + length) })
+        String.Prototype.DefineProp("Join", { Call: (self, strs*) => StringExtensions.Join(self, strs*) })
+        String.Prototype.DefineProp("Repeat", { Call: (self, count) => StringExtensions.Repeat(self, count) })
+        String.Prototype.DefineProp("Reverse", { Call: (self) => StringExtensions.Reverse(self) })
+        String.Prototype.DefineProp("LPad", { Call: (self, toLength, char?) => StringExtensions.LPad(self, toLength, char?) })
+        String.Prototype.DefineProp("RPad", { Call: (self, toLength, char?) => StringExtensions.RPad(self, toLength, char?) })
+        String.Prototype.DefineProp("Insert", { Call: (self, insertion, pos) => SubStr(self, 1, pos) . insertion . SubStr(self, pos + 1) })
+        String.Prototype.DefineProp("Remove", { Call: (self, start, length) => SubStr(self, 1, start - 1) . SubStr(self, start + length) })
 
         ; InStr aliases - all of these have the signature (string needle, bool caseSense)
-        StrDefineProp("IndexOf", { Call: (self, needle, caseSense := true) => InStr(self, needle, caseSense, 1) })
-        StrDefineProp("LastIndexOf", { Call: (self, needle, caseSense := true) => InStr(self, needle, caseSense, -1) })
-        StrDefineProp("StartsWith", { Call: (self, needle, caseSense := true) => InStr(self, needle, caseSense) == 1 })
-        StrDefineProp("EndsWith", { Call: (self, needle, caseSense := true) => (
+        String.Prototype.DefineProp("IndexOf", { Call: (self, needle, caseSense := true) => InStr(self, needle, caseSense, 1) })
+        String.Prototype.DefineProp("LastIndexOf", { Call: (self, needle, caseSense := true) => InStr(self, needle, caseSense, -1) })
+        String.Prototype.DefineProp("StartsWith", { Call: (self, needle, caseSense := true) => InStr(self, needle, caseSense) == 1 })
+        String.Prototype.DefineProp("EndsWith", { Call: (self, needle, caseSense := true) => (
             StrLen(self) >= StrLen(needle) && 
             InStr(self, needle, caseSense, -1) == StrLen(self) - StrLen(needle) + 1)
         })
-        StrDefineProp("Contains", { Call: (self, needle, caseSense := true) => InStr(self, needle, caseSense) > 0 })
+        String.Prototype.DefineProp("Contains", { Call: (self, needle, caseSense := true) => InStr(self, needle, caseSense) > 0 })
 
-        StrDefineProp("__Item", { Get: (self, start, end := start) => SubStr(self, start, (end - start) + 1)})
-        StrDefineProp("__Enum", { Call: (self, varCount) => StringExtensions.StrEnum(self, varCount)})
+        String.Prototype.DefineProp("__Item", { Get: (self, start, end := start) => SubStr(self, start, (end - start) + 1)})
+        String.Prototype.DefineProp("__Enum", { Call: (self, varCount) => StringExtensions.StrEnum(self, varCount)})
 
         ; Static variants
         String.DefineProp("Join", { Call: (self, delimiter, strs*) => StringExtensions.Join(delimiter, strs*) })

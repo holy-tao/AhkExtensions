@@ -4,10 +4,10 @@
  */
 class VarRefExtensions {
     static __New() {
-        __ObjDefineProp := Object.Prototype.DefineProp
+        VarRef.Prototype.DefineProp := Object.Prototype.DefineProp
 
         VarRef.DefineProp("Empty", { Call: (*) => &empty := "" }) ; Returns a new reference to an empty string
-        __ObjDefineProp(VarRef.Prototype, "Deref", { Call: (self) => %self%})
-        __ObjDefineProp(VarRef.Prototype, "ToString", { Call: (self) => Format("&{1}", String(%self%)) })
+        VarRef.Prototype.DefineProp("Deref", { Call: (self) => %self%})
+        VarRef.Prototype.DefineProp("ToString", { Call: (self) => Format("&{1}", String(%self%)) })
     }
 }
