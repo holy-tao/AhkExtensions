@@ -208,14 +208,12 @@ class BufferExtensions {
     static Hash(buf, algorithm := "SHA1") {
         hAlg := BCRYPT_ALG_HANDLE()
         stat := Cryptography.BCryptOpenAlgorithmProvider(hAlg, algorithm, 0, 0)
-        BufferExtensions.ThrowForNtStatus(stat)
 
         try {
             pbOut := BufferExtensions._CryptGetProperty(hAlg.value, "HashDigestLength")
             finalHash := Buffer(NumGet(pbOut, "uint"), 0)
 
             stat := Cryptography.BCryptHash(hAlg, 0, 0, buf.ptr, buf.Size, finalHash, finalHash.Size)
-            BufferExtensions.ThrowForNtStatus(stat)
 
             return finalHash
         }
@@ -231,7 +229,6 @@ class BufferExtensions {
         ; Get the actual property
         propBuf := Buffer(pcbResult, 0)
         stat := Cryptography.BCryptGetProperty(hObj, propName, propBuf, propBuf.Size, &pcbResult, 0)
-        BufferExtensions.ThrowForNtStatus(stat)
 
         return propBuf
     }
@@ -280,13 +277,5 @@ class BufferExtensions {
         result := Buffer(fullLen - 1)
         BufferExtensions.CopyTo(tempBuf, result, fullLen - 1)
         return result
-    }
- 
-    ; See https://jpassing.com/2007/08/20/error-codes-win32-vs-hresult-vs-ntstatus/
-    static ThrowForNtStatus(stat) {
-        if(stat == 0)
-            return
-
-        throw OSError(Foundation.RtlNtStatusToDosError(stat))
     }
 }
