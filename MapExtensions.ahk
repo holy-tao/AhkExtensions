@@ -13,6 +13,9 @@ class MapExtensions {
         Map.Prototype.DefineProp("All", { Call: (self, condition) => MapExtensions.All(self, condition)})
         Map.Prototype.DefineProp("Any", { Call: (self, condition?) => MapExtensions.Any(self, condition?)})
         Map.Prototype.DefineProp("WithCaseSense", { Call: (self, val) => (self.CaseSense := val, self)})
+        Map.Prototype.DefineProp("GetOrAdd", { Call: (self, key, default) => MapExtensions.GetOrAdd(self, key, default) })
+        Map.Prototype.DefineProp("Keys", { Call: (self) => MapExtensions.Keys(self) })
+        Map.Prototype.DefineProp("Values", { Call: (self) => MapExtensions.Values(self) })
     }
 
     /**
@@ -131,5 +134,45 @@ class MapExtensions {
         }
 
         return false
+    }
+    
+    /**
+     * Retrieve a value from a map, inserting `default` if the key does not already exist.
+     * 
+     * @param {Map} m the map 
+     * @param {Any} key the key to retrieve
+     * @param {Any} default default value 
+     * @returns {Any} the value
+     */
+    static GetOrAdd(m, key, default) {
+        if !m.Has(key)
+            m[key] := default
+        return m[key]
+    }
+
+    /**
+     * Return a Map's keys
+     * 
+     * @param {Map} m the map
+     * @returns {Array} the map's keys 
+     */
+    static Keys(m) {
+        arr := []
+        for k in m
+            arr.Push(k)
+        return arr
+    }
+
+   /**
+     * Return a Map's values
+     * 
+     * @param {Map} m the map
+     * @returns {Array} the map's values 
+     */
+    static Values(m) {
+        arr := []
+        for _, v in m
+            arr.Push(v)
+        return arr
     }
 }

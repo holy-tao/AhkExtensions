@@ -40,6 +40,7 @@ class ArrayExtensions {
 		Array.Prototype.DefineProp("Shift", { Call: (this) => ArrayExtensions.Shift(this) })
 		Array.Prototype.DefineProp("Fill", { Call: (this, val, start?, end?) => ArrayExtensions.Fill(this, val, start?, end?) })
 		Array.Prototype.DefineProp("SequenceEquals", { Call: (this, other, equalityComparer?) => ArrayExtensions.SequenceEquals(this, other, equalityComparer?) })
+		Array.Prototype.DefineProp("GroupBy", { Call: (this, selector) => ArrayExtensions.GroupBy(this, selector) })
 	}
 	
 	/**
@@ -627,5 +628,25 @@ class ArrayExtensions {
 			i := start + (A_Index - 1)
 			arr[i] := val
 		}
+	}
+
+	/**
+	 * Chunk an array into sub-arrays which share a key, selected by `selector`. The returned value is a
+	 * Map of those keys to arrays. Key comparison uses `Map` equality.
+	 * 
+	 * @param {Array} arr the array to group
+	 * @param {Func(Any) => Any} selector the function that selects the group key
+	 * @returns {Map<Any, Any>} A map of keys to sub-arrays 
+	 */
+	static GroupBy(arr, selector) {
+		grouped := Map()
+
+		for item in arr {
+			if !grouped.Has(key := selector.Call(item))
+				grouped[key] := []
+			grouped[key].Push(item)
+		}
+
+		return grouped
 	}
 }
