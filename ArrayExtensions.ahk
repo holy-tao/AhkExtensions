@@ -1,5 +1,6 @@
 #Requires AutoHotkey v2.0
 
+
 /**
  * Array-related utilities: sorting, searching, etc. Most methods in ArrayExtensions are
  * defined on Array's prototype in the auto-execute thread, so you can call them directly:
@@ -41,6 +42,15 @@ class ArrayExtensions {
 		Array.Prototype.DefineProp("Fill", { Call: (this, val, start?, end?) => ArrayExtensions.Fill(this, val, start?, end?) })
 		Array.Prototype.DefineProp("SequenceEquals", { Call: (this, other, equalityComparer?) => ArrayExtensions.SequenceEquals(this, other, equalityComparer?) })
 		Array.Prototype.DefineProp("GroupBy", { Call: (this, selector) => ArrayExtensions.GroupBy(this, selector) })
+
+		Array.Prototype.DefineProp("Min", { Call: (this) => Min(this*) })
+		Array.Prototype.DefineProp("MinBy", { Call: (this, selector) => Min(this.Map(selector)*) })
+		Array.Prototype.DefineProp("Max", { Call: (this) => Max(this*) })
+		Array.Prototype.DefineProp("MaxBy", { Call: (this, selector) => Max(this.Map(selector)*) })
+		Array.Prototype.DefineProp("Sum", { Call: (this) => this.Reduce((a, c) => a + c) })
+		Array.Prototype.DefineProp("SumBy", { Call: (this, selector) => this.Map(selector).Reduce((a, c) => a + c) })
+		Array.Prototype.DefineProp("Mean", { Call: (this) => ArrayExtensions.Mean(this) })
+		Array.Prototype.DefineProp("MeanBy", { Call: (this, selector) => ArrayExtensions.Mean(this.Map(selector)) })
 	}
 	
 	/**
@@ -648,5 +658,21 @@ class ArrayExtensions {
 		}
 
 		return grouped
+	}
+
+	/**
+	 * Get the mean value in `arr`, which is assumed to contain only Numbers or values coercible
+	 * to Numbers
+	 * 
+	 * @param {Array<Number>} arr 
+	 * @returns {Number} the mean value in `arr`
+	 */
+	static Mean(arr) {
+		sum := 0
+
+		for item in arr
+			sum += item
+		
+		return sum / arr.Length
 	}
 }
